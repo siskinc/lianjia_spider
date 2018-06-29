@@ -1,0 +1,42 @@
+version: "3.3"
+
+
+services:
+  lianjia:
+    # build: .
+    image: siskinc/lianjia
+    ports:
+      - "6023:6023"
+    volumes:
+      - "./logs:$HOME/spider/logs"
+    networks:
+      - lianjia_net
+    depends_on:
+      - mongo
+      - redis
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - "./mongo/db:/data/db"
+      - "./mongo/configdb/:/data/configdb"
+      - "./mongo/log:/var/log/mongodb"
+    networks:
+      - lianjia_net
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./redis/:/data"
+    networks:
+      - lianjia_net
+  
+
+networks:
+  lianjia_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
